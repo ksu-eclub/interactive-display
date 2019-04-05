@@ -3,6 +3,15 @@
 #Interactive Display (Spring Open House, 2019)
 #Author(s): Weston Harder
 
+#############################################################################
+#
+#                               IMPORTANT!!!
+#
+#https://learn.sparkfun.com/tutorials/raspberry-pi-spi-and-i2c-tutorial/all
+#See "SPI on Pi" "Configuration" section
+#Need to enable SPI on the Pi before running this script!!!
+#############################################################################
+
 import paho.mqtt.client
 import RPi.GPIO as GPIO
 import spidev
