@@ -51,7 +51,7 @@ def main():
     spi.open(0, 0) #Not really sure what this should be
 
     #Both of these come from section 4.1.2: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
-    spi.max_speed_hz = 1000 #Max is 1.5 MHz, limit to 1.4 MHz to be safe
+    spi.max_speed_hz = 10000 #Max is 1.5 MHz, limit to 1.4 MHz to be safe
     spi.mode = 0b11 # Clock polarity = 1, Clock phase = 1
 
     tc = touch_controller()
@@ -170,11 +170,11 @@ class selection_manager(object):
         #Set CLK high
         GPIO.output(CLK, GPIO.HIGH)
         #Wait a few ms???
-        sleep(0.01)
+        sleep(0.001)
         #Set CLK low
         GPIO.output(CLK, GPIO.LOW)
         #Wait a few ms???
-        sleep(0.01)
+        sleep(0.001)
         self.touch_ic += 1
         return
 
@@ -204,13 +204,13 @@ class selection_manager(object):
                 #Set CLK high
                 GPIO.output(CLK, GPIO.HIGH)
                 #Wait a few ms???
-                sleep(0.01)
+                sleep(0.001)
                 #Set CLK low
                 GPIO.output(CLK, GPIO.LOW)
                 #Set CS_IN high
                 GPIO.output(CS_IN, GPIO.HIGH)
                 #Wait a few ms???
-                sleep(0.01)
+                sleep(0.001)
                 self.touch_ic = 0
 
             #While selection is above current selection
