@@ -121,7 +121,7 @@ class mqtt_publisher(object):
             msg = "off"
             
         topic = self.topic_template.format(key)
-        rc = self.mqtt_client.publish(topic, msg)
+        rc = self.mqtt_client.publish(topic, msg)[0]
 
         if rc != 0:
             print("Failed to print message \"{}\" to \"{}\". rc = {}".format(msg, topic, rc))
