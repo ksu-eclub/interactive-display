@@ -317,7 +317,7 @@ class touch_controller(object):
             spi.writebytes([ #Start in section 7.4 page 30: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
                 0b11100000, #0:  Device Mode
                 0b00000010, #1:  Guard Key/Comms Options
-                0b00111000, #2:  Detect Integrator Limit (DIL)/Drift Hold Time
+                0b10001000, #2:  Detect Integrator Limit (DIL)/Drift Hold Time
                     #Note: Adjust these if there are false detections or not detecting
                 0b01000010, #3:  Positive Threshold (PTHR)/Positive Hysteresis
                     #Note: Adjust these if there are false detections or not detecting
@@ -340,7 +340,7 @@ class touch_controller(object):
                 0b00000000, #17: LED Fade/Key to LED
                 0b00000000, #18: LED Latch
                 0b00101010, #19: Key  0 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                    #Note: MAIN ADJUSTMENT (same for keys 1-10)! Adjust this if there are false detections or not detecting
+                    #Note: Adjust this if there are false detections or not detecting (same for keys 1-10)
                 0b00101010, #20: Key  1 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
                 0b00101010, #21: Key  2 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
                 0b00101010, #22: Key  3 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
