@@ -135,7 +135,7 @@ class selection_manager(object):
     def __init__(self):
         self.touch_ic_count = 8
         self.max_touch_ic = self.touch_ic_count - 1
-        self.touch_ic = self.touch_ic_count
+        self.touch_ic = 0
 
         self.reset()
 
@@ -163,6 +163,8 @@ class selection_manager(object):
         sleep(0.1)
         #Set CLK low
         GPIO.output(CLK, GPIO.LOW)
+        #Wait a few ms???
+        sleep(0.1)
         self.touch_ic += 1
         return
 
@@ -195,6 +197,10 @@ class selection_manager(object):
                 sleep(0.1)
                 #Set CLK low
                 GPIO.output(CLK, GPIO.LOW)
+                #Set CS_IN high
+                GPIO.output(CS_IN, GPIO.HIGH)
+                #Wait a few ms???
+                sleep(0.1)
                 self.touch_ic = 0
 
             #While selection is above current selection
