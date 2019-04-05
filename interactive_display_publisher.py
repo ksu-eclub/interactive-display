@@ -308,8 +308,8 @@ class touch_controller(object):
         if self.sm.select(touch_ic):
             #SPI: Send 0x01 to start setup
             spi.writebytes([0x01])
-            #SPI: Send 42 bytes of setup data
-            spi.writebytes([ #Start in section 7.4 page 30: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
+
+            setup_data = [ #Start in section 7.4 page 30: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
                 0b11100000, #0:  Device Mode
                 0b00000010, #1:  Guard Key/Comms Options
                 0b11111000, #2:  Detect Integrator Limit (DIL)/Drift Hold Time
@@ -360,15 +360,29 @@ class touch_controller(object):
                 0b00000000, #39: Key  8 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
                 0b00000000, #40: Key  9 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
                 0b00000000  #41: Key 10 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                ])
+                ]
+
+            #SPI: Send 42 bytes of setup data
+            spi.writebytes(setup_data)
             #If concerned about setup working properly:
-                #SPI: Request a dump of setup data
-                #Check to make sure setup data is correct
+            #SPI: Request a dump of setup data
+            print("Checking setup for touch IC {}".format(touch_ic))
+            spi.writebytes([0xc8])
+            received_setup_data = spi.readbytes(42)
+            #Check to make sure setup data is correct
+            success = True
+            for index, byte in enumerate(setup_data):
+                if byte != received_setup_data[index]:
+                    print("Failed to setup touch IC {}".format(touch_ic))
+                    print(setup_data)
+                    print(received_setup_data)
+                    success = False
+                    break
             
             #Wait at least 150 us before communications can resume
             sleep(150.0/1000000.0)
 
-            return True
+            return success
 
         else:
             return False
