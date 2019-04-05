@@ -70,12 +70,12 @@ def main():
     #Main loop
     while(True):
         #Go through every sensor and check for touch
-        print("{} Polling working touch ICs".format(loop))
+        #print("{} Polling working touch ICs".format(loop))
         tc.scan()
 
         new_key_states = tc.get_key_states()
 
-        print("{} Looking for differing touch states".format(loop))
+        #print("{} Looking for differing touch states".format(loop))
         #Go through each key number
         for key, new_state in enumerate(new_key_states):
             if(new_state != old_key_states[key]):
