@@ -31,7 +31,7 @@ spi = None
 #http://tightdev.net/SpiDev_Doc.pdf
 #http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
 
-working_touch_ics = [0, 7]
+working_touch_ics = list()
 
 def main():
     global CLK
@@ -222,6 +222,8 @@ class selection_manager(object):
 
 class touch_controller(object):
     def __init__(self):
+        global working_touch_ics
+
         self.key_count = 11
         self.key_states = list()
         self.sm = selection_manager()
@@ -233,7 +235,9 @@ class touch_controller(object):
 
         #Setup all touch ICs
         for i in range(0, self.get_touch_ic_count()):
-            self.control_setup(i)
+            success = self.control_setup(i)
+            if success:
+                working_touch_ics.append(i)
         
         #Calibrate all touch ICs
         for i in range(0, self.get_touch_ic_count()):
@@ -308,9 +312,6 @@ class touch_controller(object):
 
     def control_setup(self, touch_ic):
         global spi
-        global working_touch_ics
-        if touch_ic not in working_touch_ics:
-            return False
 
         #Perform initialization on all touch ICs
             #Set the MODE bit in the Device Mode setup
@@ -396,6 +397,9 @@ class touch_controller(object):
                     success = False
                     break
             
+            if success:
+                print("  Success")
+
             #Wait at least 150 us before communications can resume
             sleep(150.0/1000000.0)
 
@@ -456,9 +460,7 @@ class touch_controller(object):
     def report_all_keys(self, touch_ic):
         global spi
         global working_touch_ics
-        print(touch_ic)
         if touch_ic not in working_touch_ics:
-            print("Touch IC {} not in {}".format(touch_ic, working_touch_ics))
             return False
 
         print("Report all keys for touch IC {}".format(touch_ic))
@@ -500,7 +502,6 @@ class touch_controller(object):
         success = True
 
         for i in range(0, self.get_touch_ic_count()):
-            print(i)
             success = self.report_all_keys(i) and success
 
         return success
