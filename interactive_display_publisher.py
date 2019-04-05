@@ -68,15 +68,19 @@ def main():
     #Main loop
     while(True):
         #Go through every sensor and check for touch
+        print("Polling working touch ICs")
         tc.scan()
+        print("Done polling")
 
         new_key_states = tc.get_key_states()
 
+        print("Looking for differing touch states")
         #Go through each key number
         for key, new_state in enumerate(new_key_states):
             if(new_state != old_key_states[key]):
                 mqtt_pub.publish_touch(key, new_state)
-        
+        print("Done looking for differing touch states")
+
         old_key_states = new_key_states
 
     return
@@ -462,8 +466,6 @@ class touch_controller(object):
         global working_touch_ics
         if touch_ic not in working_touch_ics:
             return False
-
-        print("Report all keys for touch IC {}".format(touch_ic))
 
         if self.sm.select(touch_ic):
             #SPI: Send 0xc1 to request a binary report on all 11 keys
