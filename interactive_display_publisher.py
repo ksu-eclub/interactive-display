@@ -282,49 +282,57 @@ class touch_controller(object):
             #SPI: Send 0x01 to start setup
             spi.writebytes([0x01])
             #SPI: Send 42 bytes of setup data
-            spi.writebytes([ #Start in section 7.4: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
-                0b00000000, #Placeholder 0:  Device Mode
-                0b00000000, #Placeholder 1:  Guard Key/Comms Options
-                0b00000000, #Placeholder 2:  Detect Integrator Limit (DIL)/Drift Hold Time
-                0b00000000, #Placeholder 3:  Positive Threshold (PTHR)/Positive Hysteresis
-                0b00000000, #Placeholder 4:  Positive Drift Compensation (PDRIFT)
-                0b00000000, #Placeholder 5:  Positive Recalibration Delay (PRD)
-                0b00000000, #Placeholder 6:  Lower Burst Limit (LBL)
-                0b00000000, #Placeholder 7:  AKS Mask
-                0b00000000, #Placeholder 8:  AKS Mask
-                0b00000000, #Placeholder 9:  Detect0 PWM
-                0b00000000, #Placeholder 10: Detect1 PWM
-                0b00000000, #Placeholder 11: Detect2 PWM
-                0b00000000, #Placeholder 12: Detect3 PWM
-                0b00000000, #Placeholder 13: Detect4 PWM
-                0b00000000, #Placeholder 14: Detect5 PWM
-                0b00000000, #Placeholder 15: Detect6 PWM
-                0b00000000, #Placeholder 16: LED Detect Hold Time
-                0b00000000, #Placeholder 17: LED Fade/Key to LED
-                0b00000000, #Placeholder 18: LED Latch
-                0b00000000, #Placeholder 19: Key 0 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 20: Key 1 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 21: Key 2 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 22: Key 3 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 23: Key 4 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 24: Key 5 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 25: Key 6 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 26: Key 7 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 27: Key 8 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 28: Key 9 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 29: Key 10 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                0b00000000, #Placeholder 30: Extend Pulse Time
-                0b00000000, #Placeholder 31: Key 0 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000, #Placeholder 32: Key 1 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000, #Placeholder 33: Key 2 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000, #Placeholder 34: Key 3 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000, #Placeholder 35: Key 4 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000, #Placeholder 36: Key 5 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000, #Placeholder 37: Key 6 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000, #Placeholder 38: Key 7 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000, #Placeholder 39: Key 8 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000, #Placeholder 40: Key 9 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                0b00000000  #Placeholder 41: Key `0` Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+            spi.writebytes([ #Start in section 7.4 page 30: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
+                0b11100000, #0:  Device Mode
+                0b00000010, #1:  Guard Key/Comms Options
+                0b00111000, #2:  Detect Integrator Limit (DIL)/Drift Hold Time
+                    #Note: Adjust these if there are false detections or not detecting
+                0b01000010, #3:  Positive Threshold (PTHR)/Positive Hysteresis
+                    #Note: Adjust these if there are false detections or not detecting
+                0b00000110, #4:  Positive Drift Compensation (PDRIFT)
+                    #Note: Just used default, adjustable
+                0b00000110, #5:  Positive Recalibration Delay (PRD)
+                    #Note: Just used default, adjustable
+                0b00010010, #6:  Lower Burst Limit (LBL)
+                    #Note: Adjust this if there are false detections or not detecting
+                0b00000000, #7:  AKS Mask
+                0b00000000, #8:  AKS Mask
+                0b00000000, #9:  Detect0 PWM
+                0b00000000, #10: Detect1 PWM
+                0b00000000, #11: Detect2 PWM
+                0b00000000, #12: Detect3 PWM
+                0b00000000, #13: Detect4 PWM
+                0b00000000, #14: Detect5 PWM
+                0b00000000, #15: Detect6 PWM
+                0b00000000, #16: LED Detect Hold Time
+                0b00000000, #17: LED Fade/Key to LED
+                0b00000000, #18: LED Latch
+                0b00101010, #19: Key  0 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                    #Note: MAIN ADJUSTMENT (same for keys 1-10)! Adjust this if there are false detections or not detecting
+                0b00101010, #20: Key  1 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00101010, #21: Key  2 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00101010, #22: Key  3 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00101010, #23: Key  4 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00101010, #24: Key  5 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00101010, #25: Key  6 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00101010, #26: Key  7 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00101010, #27: Key  8 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00101010, #28: Key  9 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00101010, #29: Key 10 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #30: Extend Pulse Time
+                    #Note: No idea what this does. Left at 0.
+                0b01111010, #31: Key  0 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                    #Note: Just used default, adjustable (same for keys 1-10)
+                0b00000000, #32: Key  1 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #33: Key  2 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #34: Key  3 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #35: Key  4 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #36: Key  5 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #37: Key  6 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #38: Key  7 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #39: Key  8 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #40: Key  9 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000  #41: Key 10 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
                 ])
             #If concerned about setup working properly:
                 #SPI: Request a dump of setup data
