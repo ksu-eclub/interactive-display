@@ -3,7 +3,6 @@
 #Interactive Display (Spring Open House, 2019)
 #Author(s): Weston Harder
 
-from datetime.datetime import now
 import paho.mqtt.client
 import RPi.GPIO as GPIO
 import spidev
@@ -281,48 +280,48 @@ class touch_controller(object):
             spi.writebytes([0x01])
             #SPI: Send 42 bytes of setup data
             spi.writebytes([
-                0x00, #Placeholder 0
-                0x00, #Placeholder 1
-                0x00, #Placeholder 2
-                0x00, #Placeholder 3
-                0x00, #Placeholder 4
-                0x00, #Placeholder 5
-                0x00, #Placeholder 6
-                0x00, #Placeholder 7
-                0x00, #Placeholder 8
-                0x00, #Placeholder 9
-                0x00, #Placeholder 10
-                0x00, #Placeholder 11
-                0x00, #Placeholder 12
-                0x00, #Placeholder 13
-                0x00, #Placeholder 14
-                0x00, #Placeholder 15
-                0x00, #Placeholder 16
-                0x00, #Placeholder 17
-                0x00, #Placeholder 18
-                0x00, #Placeholder 19
-                0x00, #Placeholder 20
-                0x00, #Placeholder 21
-                0x00, #Placeholder 22
-                0x00, #Placeholder 23
-                0x00, #Placeholder 24
-                0x00, #Placeholder 25
-                0x00, #Placeholder 26
-                0x00, #Placeholder 27
-                0x00, #Placeholder 28
-                0x00, #Placeholder 29
-                0x00, #Placeholder 30
-                0x00, #Placeholder 31
-                0x00, #Placeholder 32
-                0x00, #Placeholder 33
-                0x00, #Placeholder 34
-                0x00, #Placeholder 35
-                0x00, #Placeholder 36
-                0x00, #Placeholder 37
-                0x00, #Placeholder 38
-                0x00, #Placeholder 39
-                0x00, #Placeholder 40
-                0x00  #Placeholder 41
+                0b00000000, #Placeholder 0:  Device Mode
+                0b00000000, #Placeholder 1:  Guard Key/Comms Options
+                0b00000000, #Placeholder 2:  Detect Integrator Limit (DIL)/Drift Hold Time
+                0b00000000, #Placeholder 3:  Positive Threshold (PTHR)/Positive Hysteresis
+                0b00000000, #Placeholder 4:  Positive Drift Compensation (PDRIFT)
+                0b00000000, #Placeholder 5:  Positive Recalibration Delay (PRD)
+                0b00000000, #Placeholder 6:  Lower Burst Limit (LBL)
+                0b00000000, #Placeholder 7:  AKS Mask
+                0b00000000, #Placeholder 8:  AKS Mask
+                0b00000000, #Placeholder 9:  Detect0 PWM
+                0b00000000, #Placeholder 10: Detect1 PWM
+                0b00000000, #Placeholder 11: Detect2 PWM
+                0b00000000, #Placeholder 12: Detect3 PWM
+                0b00000000, #Placeholder 13: Detect4 PWM
+                0b00000000, #Placeholder 14: Detect5 PWM
+                0b00000000, #Placeholder 15: Detect6 PWM
+                0b00000000, #Placeholder 16: LED Detect Hold Time
+                0b00000000, #Placeholder 17: LED Fade/Key to LED
+                0b00000000, #Placeholder 18: LED Latch
+                0b00000000, #Placeholder 19: Key 0 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 20: Key 1 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 21: Key 2 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 22: Key 3 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 23: Key 4 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 24: Key 5 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 25: Key 6 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 26: Key 7 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 27: Key 8 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 28: Key 9 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 29: Key 10 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
+                0b00000000, #Placeholder 30: Extend Pulse Time
+                0b00000000, #Placeholder 31: Key 0 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #Placeholder 32: Key 1 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #Placeholder 33: Key 2 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #Placeholder 34: Key 3 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #Placeholder 35: Key 4 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #Placeholder 36: Key 5 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #Placeholder 37: Key 6 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #Placeholder 38: Key 7 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #Placeholder 39: Key 8 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000, #Placeholder 40: Key 9 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
+                0b00000000  #Placeholder 41: Key `0` Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
                 ])
             #If concerned about setup working properly:
                 #SPI: Request a dump of setup data
