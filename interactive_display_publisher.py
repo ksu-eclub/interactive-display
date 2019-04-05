@@ -160,7 +160,7 @@ class selection_manager(object):
         #Set CLK high
         GPIO.output(CLK, GPIO.HIGH)
         #Wait a few ms???
-        sleep(1/10)
+        sleep(1)
         #Set CLK low
         GPIO.output(CLK, GPIO.LOW)
         self.touch_ic += 1
@@ -178,7 +178,7 @@ class selection_manager(object):
         #Set RESET low
         GPIO.output(RESET, GPIO.LOW)
         #Wait a few ms???
-        sleep(1/10)
+        sleep(1)
         #Set RESET high
         GPIO.output(RESET, GPIO.HIGH)
         self.touch_ic = self.max_touch_ic + 1
@@ -200,7 +200,7 @@ class selection_manager(object):
                 #Set CLK high
                 GPIO.output(CLK, GPIO.HIGH)
                 #Wait a few ms???
-                sleep(1/10)
+                sleep(1)
                 #Set CLK low
                 GPIO.output(CLK, GPIO.LOW)
                 self.touch_ic = 0
