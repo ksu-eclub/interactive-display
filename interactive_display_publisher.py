@@ -116,11 +116,11 @@ class mqtt_publisher(object):
         return
 
     def publish_touch(self, key, new_state):
-        print("Remove this after testing is done. Publishing for key {} touch.".format(key)) #Remove this after testing is done.
         if new_state:
             msg = "on"
         else:
             msg = "off"
+        print("Key {} {}".format(key, msg)) #Remove this after testing is done.
             
         topic = self.topic_template.format(key)
         rc = self.mqtt_client.publish(topic, msg)[0]
@@ -133,8 +133,9 @@ class mqtt_publisher(object):
 
 class selection_manager(object):
     def __init__(self):
-        self.max_touch_ic = 7 #8 total touch ICs
-        self.touch_ic = self.max_touch_ic + 1
+        self.touch_ic_count = 2
+        self.max_touch_ic = self.touch_ic_count - 1
+        self.touch_ic = self.touch_ic_count
 
         self.reset()
 
@@ -143,8 +144,8 @@ class selection_manager(object):
     def get_max(self):
         return self.max_touch_ic
 
-    def get_number(self):
-        return self.max_touch_ic + 1
+    def get_touch_ic_count(self):
+        return self.touch_ic_count
 
     def get_selection(self):
         return self.touch_ic
@@ -424,7 +425,7 @@ class touch_controller(object):
         return self.key_states[(touch_ic * self.get_key_count()) + key]
 
     def get_touch_ic_count(self):
-        return self.sm.get_number()
+        return self.sm.get_touch_ic_count()
     
     def report_all_keys(self, touch_ic):
         global spi
