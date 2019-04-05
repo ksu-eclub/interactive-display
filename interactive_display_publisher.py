@@ -41,7 +41,7 @@ def main():
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(CLK, GPIO.OUT, initial=GPIO.LOW)
-    GPIO.setup(CS_IN, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(CS_IN, GPIO.OUT, initial=GPIO.HIGH)
     GPIO.setup(RESET, GPIO.OUT, initial=GPIO.HIGH)
 
     #SPI setup
@@ -133,7 +133,7 @@ class mqtt_publisher(object):
 
 class selection_manager(object):
     def __init__(self):
-        self.touch_ic_count = 2
+        self.touch_ic_count = 8
         self.max_touch_ic = self.touch_ic_count - 1
         self.touch_ic = self.touch_ic_count
 
@@ -155,11 +155,12 @@ class selection_manager(object):
         global CS_IN
         global RESET
 
-        #Set CS_IN low
-        GPIO.output(CS_IN, GPIO.LOW)
+        #Set CS_IN high
+        GPIO.output(CS_IN, GPIO.HIGH)
         #Set CLK high
         GPIO.output(CLK, GPIO.HIGH)
         #Wait a few ms???
+        sleep(1/10)
         #Set CLK low
         GPIO.output(CLK, GPIO.LOW)
         self.touch_ic += 1
@@ -170,16 +171,9 @@ class selection_manager(object):
         global CS_IN
         global RESET
 
-        #Set CS_IN low
-        GPIO.output(CS_IN, GPIO.LOW)
-        #Set CLK low
-        GPIO.output(CLK, GPIO.LOW)
-        #Set RESET low
-        GPIO.output(RESET, GPIO.LOW)
-        #Wait a few ms???
-        #Set RESET high
-        GPIO.output(RESET, GPIO.HIGH)
-        self.touch_ic = self.max_touch_ic + 1
+        while self.touch_ic < self.touch_ic_count:
+            self.increment()
+
         return
 
     def select(self, new_touch_ic):
@@ -192,12 +186,13 @@ class selection_manager(object):
             #If selection is below current selection
             if new_touch_ic < self.touch_ic:
                 #Select touch IC 0
-                self.reset()
-                #Set CS_IN high
-                GPIO.output(CS_IN, GPIO.HIGH)
+                self.reset() #Not the most efficient but whatever
+                #Set CS_IN low
+                GPIO.output(CS_IN, GPIO.LOW)
                 #Set CLK high
                 GPIO.output(CLK, GPIO.HIGH)
                 #Wait a few ms???
+                sleep(1/10)
                 #Set CLK low
                 GPIO.output(CLK, GPIO.LOW)
                 self.touch_ic = 0
@@ -317,7 +312,7 @@ class touch_controller(object):
             spi.writebytes([ #Start in section 7.4 page 30: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
                 0b11100000, #0:  Device Mode
                 0b00000010, #1:  Guard Key/Comms Options
-                0b00111000, #2:  Detect Integrator Limit (DIL)/Drift Hold Time
+                0b11111000, #2:  Detect Integrator Limit (DIL)/Drift Hold Time
                     #Note: Adjust these if there are false detections or not detecting
                 0b01000010, #3:  Positive Threshold (PTHR)/Positive Hysteresis
                     #Note: Adjust these if there are false detections or not detecting
@@ -340,7 +335,7 @@ class touch_controller(object):
                 0b00000000, #17: LED Fade/Key to LED
                 0b00000000, #18: LED Latch
                 0b00101010, #19: Key  0 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
-                    #Note: MAIN ADJUSTMENT (same for keys 1-10)! Adjust this if there are false detections or not detecting
+                    #Note: Adjust this if there are false detections or not detecting (same for keys 1-10)
                 0b00101010, #20: Key  1 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
                 0b00101010, #21: Key  2 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
                 0b00101010, #22: Key  3 Negative Threshold (NTHR) / Negative Hysteresis (NHYST)
