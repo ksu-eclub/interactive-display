@@ -41,7 +41,7 @@ def main():
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(CLK, GPIO.OUT, initial=GPIO.LOW)
-    GPIO.setup(CS_IN, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(CS_IN, GPIO.OUT, initial=GPIO.HIGH)
     GPIO.setup(RESET, GPIO.OUT, initial=GPIO.HIGH)
 
     #SPI setup
@@ -133,7 +133,7 @@ class mqtt_publisher(object):
 
 class selection_manager(object):
     def __init__(self):
-        self.touch_ic_count = 2
+        self.touch_ic_count = 8
         self.max_touch_ic = self.touch_ic_count - 1
         self.touch_ic = self.touch_ic_count
 
@@ -155,12 +155,12 @@ class selection_manager(object):
         global CS_IN
         global RESET
 
-        #Set CS_IN low
-        GPIO.output(CS_IN, GPIO.LOW)
+        #Set CS_IN high
+        GPIO.output(CS_IN, GPIO.HIGH)
         #Set CLK high
         GPIO.output(CLK, GPIO.HIGH)
         #Wait a few ms???
-        sleep(1)
+        sleep(1/10)
         #Set CLK low
         GPIO.output(CLK, GPIO.LOW)
         self.touch_ic += 1
@@ -171,17 +171,9 @@ class selection_manager(object):
         global CS_IN
         global RESET
 
-        #Set CS_IN low
-        GPIO.output(CS_IN, GPIO.LOW)
-        #Set CLK low
-        GPIO.output(CLK, GPIO.LOW)
-        #Set RESET low
-        GPIO.output(RESET, GPIO.LOW)
-        #Wait a few ms???
-        sleep(1)
-        #Set RESET high
-        GPIO.output(RESET, GPIO.HIGH)
-        self.touch_ic = self.max_touch_ic + 1
+        while self.touch_ic < self.touch_ic_count:
+            self.increment()
+
         return
 
     def select(self, new_touch_ic):
@@ -194,13 +186,13 @@ class selection_manager(object):
             #If selection is below current selection
             if new_touch_ic < self.touch_ic:
                 #Select touch IC 0
-                self.reset()
-                #Set CS_IN high
-                GPIO.output(CS_IN, GPIO.HIGH)
+                self.reset() #Not the most efficient but whatever
+                #Set CS_IN low
+                GPIO.output(CS_IN, GPIO.LOW)
                 #Set CLK high
                 GPIO.output(CLK, GPIO.HIGH)
                 #Wait a few ms???
-                sleep(1)
+                sleep(1/10)
                 #Set CLK low
                 GPIO.output(CLK, GPIO.LOW)
                 self.touch_ic = 0
