@@ -56,7 +56,7 @@ def main():
     mqtt_pub = mqtt_publisher()
     
     #Wait until connected to MQTT server
-    while not mqtt_pub.connected():
+    while not mqtt_pub.connected:
         pass
 
     #Main loop
