@@ -31,6 +31,8 @@ spi = None
 #http://tightdev.net/SpiDev_Doc.pdf
 #http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
 
+working_touch_ics = [0, 7]
+
 def main():
     global CLK
     global CS_IN
@@ -49,15 +51,17 @@ def main():
     spi.open(0, 0) #Not really sure what this should be
 
     #Both of these come from section 4.1.2: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
-    spi.max_speed_hz = 10 #Max is 1.5 MHz, limit to 1.4 MHz to be safe
+    spi.max_speed_hz = 100 #Max is 1.5 MHz, limit to 1.4 MHz to be safe
     spi.mode = 0b11 # Clock polarity = 1, Clock phase = 1
 
     tc = touch_controller()
     mqtt_pub = mqtt_publisher()
     
     #Wait until connected to MQTT server
+    print("Waiting")
     while not mqtt_pub.connected:
         pass
+    print("Done waiting")
 
     old_key_states = tc.get_key_states()
 
@@ -241,6 +245,9 @@ class touch_controller(object):
 
     def control_calibrate(self, touch_ic):
         global spi
+        global working_touch_ics
+        if touch_ic not in working_touch_ics:
+            return False
 
         if self.sm.select(touch_ic):
             #SPI: Send 0x03 to calibrate all keys
@@ -301,6 +308,9 @@ class touch_controller(object):
 
     def control_setup(self, touch_ic):
         global spi
+        global working_touch_ics
+        if touch_ic not in working_touch_ics:
+            return False
 
         #Perform initialization on all touch ICs
             #Set the MODE bit in the Device Mode setup
@@ -445,6 +455,11 @@ class touch_controller(object):
     
     def report_all_keys(self, touch_ic):
         global spi
+        global working_touch_ics
+        if touch_ic not in working_touch_ics:
+            return False
+
+        print("Report all keys for touch IC {}".format(touch_ic))
 
         if self.sm.select(touch_ic):
             #SPI: Send 0xc1 to request a binary report on all 11 keys
