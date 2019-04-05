@@ -160,7 +160,7 @@ class selection_manager(object):
         #Set CLK high
         GPIO.output(CLK, GPIO.HIGH)
         #Wait a few ms???
-        sleep(1/10)
+        sleep(0.1)
         #Set CLK low
         GPIO.output(CLK, GPIO.LOW)
         self.touch_ic += 1
@@ -192,7 +192,7 @@ class selection_manager(object):
                 #Set CLK high
                 GPIO.output(CLK, GPIO.HIGH)
                 #Wait a few ms???
-                sleep(1/10)
+                sleep(0.1)
                 #Set CLK low
                 GPIO.output(CLK, GPIO.LOW)
                 self.touch_ic = 0
@@ -240,7 +240,7 @@ class touch_controller(object):
             spi.writebytes([0x03])
             
             #Wait at least 150 us before communications can resume
-            sleep(150/1000000)
+            sleep(150.0/1000000.0)
 
             return True
 
@@ -255,7 +255,7 @@ class touch_controller(object):
             spi.writebytes([0x0c])
             
             #Wait at least 50 ms before communications can resume
-            sleep(50/1000)
+            sleep(50.0/1000.0)
 
             return True
 
@@ -270,7 +270,7 @@ class touch_controller(object):
             spi.writebytes([0x04])
             
             #Wait at least 160 ms before communications can resume
-            sleep(160/1000)
+            sleep(160.0/1000.0)
 
             return True
 
@@ -285,7 +285,7 @@ class touch_controller(object):
             spi.writebytes([0x0b])
             
             #Wait at least 150 ms before communications can resume
-            sleep(150/1000)
+            sleep(150.0/1000.0)
 
             return True
 
@@ -366,7 +366,7 @@ class touch_controller(object):
                 #Check to make sure setup data is correct
             
             #Wait at least 150 us before communications can resume
-            sleep(150/1000000)
+            sleep(150.0/1000000.0)
 
             return True
 
@@ -381,7 +381,7 @@ class touch_controller(object):
             spi.writebytes([0x05])
             
             #Wait at least 150 us after a low signal is applied to the SS_bar pin before communications can resume
-            sleep(150/1000000)
+            sleep(150.0/1000000.0)
 
             return True
 
@@ -396,7 +396,7 @@ class touch_controller(object):
             spi.writebytes([0x0a])
             
             #Wait at least 200 ms before communications can resume
-            sleep(200/1000)
+            sleep(200.0/1000.0)
 
             return True
 
