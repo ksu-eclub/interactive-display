@@ -65,24 +65,26 @@ def main():
 
     old_key_states = tc.get_key_states()
 
+    loop = 0
+
     #Main loop
     while(True):
         #Go through every sensor and check for touch
-        print("Polling working touch ICs")
+        print("{} Polling working touch ICs".format(loop))
         tc.scan()
-        print("Done polling")
 
         new_key_states = tc.get_key_states()
 
-        print("Looking for differing touch states")
+        print("{} Looking for differing touch states".format(loop))
         #Go through each key number
         for key, new_state in enumerate(new_key_states):
             if(new_state != old_key_states[key]):
                 mqtt_pub.publish_touch(key, new_state)
-        print("Done looking for differing touch states")
 
         old_key_states = new_key_states
 
+        loop += 1
+        
     return
 
 class mqtt_publisher(object):
