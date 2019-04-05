@@ -200,7 +200,8 @@ class selection_manager(object):
             #While selection is above current selection
             while new_touch_ic > self.touch_ic:
                 self.increment()
-
+            print("Selected {}".format(new_touch_ic))
+            raw_input()
             return True
 
         #If selection is invalid
