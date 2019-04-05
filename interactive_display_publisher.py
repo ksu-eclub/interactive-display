@@ -49,7 +49,7 @@ def main():
     spi.open(0, 0) #Not really sure what this should be
 
     #Both of these come from section 4.1.2: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
-    spi.max_speed_hz = 14000000 #Max is 1.5 MHz, limit to 1.4 MHz to be safe
+    spi.max_speed_hz = 10 #Max is 1.5 MHz, limit to 1.4 MHz to be safe
     spi.mode = 0b11 # Clock polarity = 1, Clock phase = 1
 
     tc = touch_controller()
@@ -135,7 +135,7 @@ class selection_manager(object):
     def __init__(self):
         self.touch_ic_count = 8
         self.max_touch_ic = self.touch_ic_count - 1
-        self.touch_ic = self.touch_ic_count
+        self.touch_ic = 0
 
         self.reset()
 
@@ -160,9 +160,11 @@ class selection_manager(object):
         #Set CLK high
         GPIO.output(CLK, GPIO.HIGH)
         #Wait a few ms???
-        sleep(1/10)
+        sleep(0.1)
         #Set CLK low
         GPIO.output(CLK, GPIO.LOW)
+        #Wait a few ms???
+        sleep(0.1)
         self.touch_ic += 1
         return
 
@@ -192,15 +194,20 @@ class selection_manager(object):
                 #Set CLK high
                 GPIO.output(CLK, GPIO.HIGH)
                 #Wait a few ms???
-                sleep(1/10)
+                sleep(0.1)
                 #Set CLK low
                 GPIO.output(CLK, GPIO.LOW)
+                #Set CS_IN high
+                GPIO.output(CS_IN, GPIO.HIGH)
+                #Wait a few ms???
+                sleep(0.1)
                 self.touch_ic = 0
 
             #While selection is above current selection
             while new_touch_ic > self.touch_ic:
                 self.increment()
-
+            #print("Selected {}".format(new_touch_ic))
+            #raw_input()
             return True
 
         #If selection is invalid
@@ -240,7 +247,7 @@ class touch_controller(object):
             spi.writebytes([0x03])
             
             #Wait at least 150 us before communications can resume
-            sleep(150/1000000)
+            sleep(150.0/1000000.0)
 
             return True
 
@@ -255,7 +262,7 @@ class touch_controller(object):
             spi.writebytes([0x0c])
             
             #Wait at least 50 ms before communications can resume
-            sleep(50/1000)
+            sleep(50.0/1000.0)
 
             return True
 
@@ -270,7 +277,7 @@ class touch_controller(object):
             spi.writebytes([0x04])
             
             #Wait at least 160 ms before communications can resume
-            sleep(160/1000)
+            sleep(160.0/1000.0)
 
             return True
 
@@ -285,7 +292,7 @@ class touch_controller(object):
             spi.writebytes([0x0b])
             
             #Wait at least 150 ms before communications can resume
-            sleep(150/1000)
+            sleep(150.0/1000.0)
 
             return True
 
@@ -308,8 +315,8 @@ class touch_controller(object):
         if self.sm.select(touch_ic):
             #SPI: Send 0x01 to start setup
             spi.writebytes([0x01])
-            #SPI: Send 42 bytes of setup data
-            spi.writebytes([ #Start in section 7.4 page 30: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
+
+            setup_data = [ #Start in section 7.4 page 30: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
                 0b11100000, #0:  Device Mode
                 0b00000010, #1:  Guard Key/Comms Options
                 0b11111000, #2:  Detect Integrator Limit (DIL)/Drift Hold Time
@@ -360,15 +367,29 @@ class touch_controller(object):
                 0b00000000, #39: Key  8 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
                 0b00000000, #40: Key  9 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
                 0b00000000  #41: Key 10 Negative Drift Compensation (NDRIFT) / Negative Recalibration Delay (NRD)
-                ])
+                ]
+
+            #SPI: Send 42 bytes of setup data
+            spi.writebytes(setup_data)
             #If concerned about setup working properly:
-                #SPI: Request a dump of setup data
-                #Check to make sure setup data is correct
+            #SPI: Request a dump of setup data
+            print("Checking setup for touch IC {}".format(touch_ic))
+            spi.writebytes([0xc8])
+            received_setup_data = spi.readbytes(42)
+            #Check to make sure setup data is correct
+            success = True
+            for index, byte in enumerate(setup_data):
+                if byte != received_setup_data[index]:
+                    print("Failed to setup touch IC {}".format(touch_ic))
+                    print(setup_data)
+                    print(received_setup_data)
+                    success = False
+                    break
             
             #Wait at least 150 us before communications can resume
-            sleep(150/1000000)
+            sleep(150.0/1000000.0)
 
-            return True
+            return success
 
         else:
             return False
@@ -381,7 +402,7 @@ class touch_controller(object):
             spi.writebytes([0x05])
             
             #Wait at least 150 us after a low signal is applied to the SS_bar pin before communications can resume
-            sleep(150/1000000)
+            sleep(150.0/1000000.0)
 
             return True
 
@@ -396,7 +417,7 @@ class touch_controller(object):
             spi.writebytes([0x0a])
             
             #Wait at least 200 ms before communications can resume
-            sleep(200/1000)
+            sleep(200.0/1000.0)
 
             return True
 
