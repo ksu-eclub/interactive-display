@@ -279,7 +279,7 @@ class touch_controller(object):
             #SPI: Send 0x01 to start setup
             spi.writebytes([0x01])
             #SPI: Send 42 bytes of setup data
-            spi.writebytes([
+            spi.writebytes([ #Start in section 7.4: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
                 0b00000000, #Placeholder 0:  Device Mode
                 0b00000000, #Placeholder 1:  Guard Key/Comms Options
                 0b00000000, #Placeholder 2:  Detect Integrator Limit (DIL)/Drift Hold Time
