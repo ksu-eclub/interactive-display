@@ -58,8 +58,10 @@ def main():
     mqtt_pub = mqtt_publisher()
     
     #Wait until connected to MQTT server
+    print("Waiting")
     while not mqtt_pub.connected:
         pass
+    print("Done waiting")
 
     old_key_states = tc.get_key_states()
 
@@ -456,6 +458,8 @@ class touch_controller(object):
         global working_touch_ics
         if touch_ic not in working_touch_ics:
             return False
+
+        print("Report all keys for touch IC {}".format(touch_ic))
 
         if self.sm.select(touch_ic):
             #SPI: Send 0xc1 to request a binary report on all 11 keys
