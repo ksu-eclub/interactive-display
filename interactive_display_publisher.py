@@ -8,32 +8,17 @@ from time import sleep
 
 def main():
     #Initial setup
-    ap = audio_player()
     tc = touch_controller()
-
-    #Store sound effects in a dictionary. Key = key. Value = (frequency, duration).
-    sounds = dict()
-    sounds[  0] = (400,  3  ) #When key   0 is touched, play a  400 Hz tone for 3 seconds
-    sounds[ 55] = (1000, 0.5) #When key  55 is touched, play a 1000 Hz tone for 0.5 seconds
-    sounds[799] = (4000, 0  ) #When key 799 is touched, play a 4000 Hz tone until the next sound starts
+    mqtt_pub = mqtt_publisher()
     
-    default_sound = (440, 0) #When any other key is touched, play a 440 Hz tone until the next sound starts
-
     #Main loop
     while(True):
         #Go through every sensor and check for touch
         tc.scan()
 
-        for key in range(0, tc.get_key_number()):
-            #First key detected "wins" and gets to play a sound for this cycle
-            if tc.get_key_state(key):
-                try:
-                    freq, dur = sounds[key]
-                except:
-                    freq, dur = default_sound
-                
-                ap.beep(freq, dur)
-                break
+        #Go through each key number
+        for key in tc.get_active_keys():
+            mqtt_pub.publish_touch(key)
 
     return
 
@@ -44,17 +29,31 @@ class mqtt_publisher(object):
         self.topic = "interactive_display/touch_events"
         self.mqtt_client = paho.mqtt.client.Client()
         self.mqtt_client.on_connect = self.on_connect
-        self.client.connect_async(self.host, self.port)
+        self.mqtt_client.on_disconnect = self.on_disconnect
+        self.connect()
         self.client.loop_start()
         
         return
     
-    def on_connect(client, userdata, flags, rc):
+    def connect(self):
+        print("Attempting to connect to \"{}:{}\"".format(self.host, self.port))
+        self.client.connect_async(self.host, self.port)
+        return
+
+    def on_connect(self, client, userdata, flags, rc):
         if rc==0:
             print("Connected to MQTT server successfully.")
         else:
             print("Failed to connect to the MQTT server. rc = {}".format(rc))
             print("See http://www.steves-internet-guide.com/client-connections-python-mqtt/ or https://pypi.org/project/paho-mqtt/ for help.")
+            self.connect()
+
+        return
+
+    def on_disconnect(self, client, userdata, rc):
+        print("Disconnected from the MQTT server. rc = {}".format(rc))
+        print("See http://www.steves-internet-guide.com/client-connections-python-mqtt/ or https://pypi.org/project/paho-mqtt/ for help.")
+        self.connect()
 
         return
 
@@ -248,14 +247,18 @@ class touch_controller(object):
         else:
             return False
 
-    def get_key_number(self):
+    def get_active_keys(self):
+        #Return the indices of all active (touched) keys
+        return [index for index, key_state in self.key_states if key_state]
+
+    def get_key_count(self):
         return self.keys
 
     def get_key_state(self, key):
         return self.key_states[key]
 
     def get_touch_ic_key_state(self, touch_ic, key):
-        return self.key_states[(touch_ic * self.get_key_number()) + key]
+        return self.key_states[(touch_ic * self.get_key_count()) + key]
 
     def get_touch_ic_number(self):
         return self.sm.get_number()
