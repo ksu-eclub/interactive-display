@@ -21,4 +21,5 @@ func main() {
 	if token := c.Subscribe("#", 0, nil); token.Wait() && token.Error() != nil {
 		panic(token.Error())
 	}
+	fmt.Println("Subscribed to events")
 }
