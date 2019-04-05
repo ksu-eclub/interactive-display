@@ -392,7 +392,7 @@ class touch_controller(object):
 
     def get_active_keys(self):
         #Return the indices of all active (touched) keys
-        return [index for index, key_state in self.key_states if key_state]
+        return [index for index, key_state in enumerate(self.key_states) if key_state]
 
     def get_key_count(self):
         return self.key_count
