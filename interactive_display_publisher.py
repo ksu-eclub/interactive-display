@@ -31,7 +31,7 @@ spi = None
 #http://tightdev.net/SpiDev_Doc.pdf
 #http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
 
-working_touch_ics = [0, 7]
+working_touch_ics = list()
 
 def main():
     global CLK
@@ -51,7 +51,7 @@ def main():
     spi.open(0, 0) #Not really sure what this should be
 
     #Both of these come from section 4.1.2: http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9570-AT42-QTouch-BSW-AT42QT1110-Automotive_Datasheet.pdf
-    spi.max_speed_hz = 100 #Max is 1.5 MHz, limit to 1.4 MHz to be safe
+    spi.max_speed_hz = 1000 #Max is 1.5 MHz, limit to 1.4 MHz to be safe
     spi.mode = 0b11 # Clock polarity = 1, Clock phase = 1
 
     tc = touch_controller()
@@ -65,19 +65,25 @@ def main():
 
     old_key_states = tc.get_key_states()
 
+    loop = 0
+
     #Main loop
     while(True):
         #Go through every sensor and check for touch
+        #print("{} Polling working touch ICs".format(loop))
         tc.scan()
 
         new_key_states = tc.get_key_states()
 
+        #print("{} Looking for differing touch states".format(loop))
         #Go through each key number
         for key, new_state in enumerate(new_key_states):
             if(new_state != old_key_states[key]):
                 mqtt_pub.publish_touch(key, new_state)
-        
+
         old_key_states = new_key_states
+
+        loop += 1
 
     return
 
@@ -137,7 +143,7 @@ class mqtt_publisher(object):
 
 class selection_manager(object):
     def __init__(self):
-        self.touch_ic_count = 8
+        self.touch_ic_count = 16
         self.max_touch_ic = self.touch_ic_count - 1
         self.touch_ic = 0
 
@@ -164,11 +170,11 @@ class selection_manager(object):
         #Set CLK high
         GPIO.output(CLK, GPIO.HIGH)
         #Wait a few ms???
-        sleep(0.1)
+        sleep(0.01)
         #Set CLK low
         GPIO.output(CLK, GPIO.LOW)
         #Wait a few ms???
-        sleep(0.1)
+        sleep(0.01)
         self.touch_ic += 1
         return
 
@@ -198,13 +204,13 @@ class selection_manager(object):
                 #Set CLK high
                 GPIO.output(CLK, GPIO.HIGH)
                 #Wait a few ms???
-                sleep(0.1)
+                sleep(0.01)
                 #Set CLK low
                 GPIO.output(CLK, GPIO.LOW)
                 #Set CS_IN high
                 GPIO.output(CS_IN, GPIO.HIGH)
                 #Wait a few ms???
-                sleep(0.1)
+                sleep(0.01)
                 self.touch_ic = 0
 
             #While selection is above current selection
@@ -222,6 +228,8 @@ class selection_manager(object):
 
 class touch_controller(object):
     def __init__(self):
+        global working_touch_ics
+
         self.key_count = 11
         self.key_states = list()
         self.sm = selection_manager()
@@ -233,7 +241,9 @@ class touch_controller(object):
 
         #Setup all touch ICs
         for i in range(0, self.get_touch_ic_count()):
-            self.control_setup(i)
+            success = self.control_setup(i)
+            if success:
+                working_touch_ics.append(i)
         
         #Calibrate all touch ICs
         for i in range(0, self.get_touch_ic_count()):
@@ -308,9 +318,6 @@ class touch_controller(object):
 
     def control_setup(self, touch_ic):
         global spi
-        global working_touch_ics
-        if touch_ic not in working_touch_ics:
-            return False
 
         #Perform initialization on all touch ICs
             #Set the MODE bit in the Device Mode setup
@@ -396,6 +403,9 @@ class touch_controller(object):
                     success = False
                     break
             
+            if success:
+                print("  Success")
+
             #Wait at least 150 us before communications can resume
             sleep(150.0/1000000.0)
 
@@ -459,8 +469,6 @@ class touch_controller(object):
         if touch_ic not in working_touch_ics:
             return False
 
-        print("Report all keys for touch IC {}".format(touch_ic))
-
         if self.sm.select(touch_ic):
             #SPI: Send 0xc1 to request a binary report on all 11 keys
             spi.writebytes([0xc1])
@@ -498,7 +506,7 @@ class touch_controller(object):
         success = True
 
         for i in range(0, self.get_touch_ic_count()):
-            success = success and self.report_all_keys(i)
+            success = self.report_all_keys(i) and success
 
         return success
 
