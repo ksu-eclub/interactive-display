@@ -30,7 +30,11 @@ gradle build
 export GOPATH
 
 trap 'kill $(jobs -p)' EXIT
-. modules.txt
+if [ $# -ge 1 ]; then
+    . "$1"
+else
+    . modules.txt
+fi
 while [ "x$(jobs -p)" != "x" ]; do
     sleep 1s
 done
