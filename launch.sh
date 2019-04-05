@@ -21,6 +21,10 @@ java() {
     launch_app "$1" "$(which java)" -cp build/libs/*.jar "$2"
 }
 
+gradle build
+. /etc/environment
+export GOPATH
+
 trap 'kill $(jobs -p)' EXIT
 . modules.txt
 while [ "x$(jobs -p)" != "x" ]; do
