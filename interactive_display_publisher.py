@@ -84,7 +84,7 @@ def main():
         old_key_states = new_key_states
 
         loop += 1
-        
+
     return
 
 class mqtt_publisher(object):
@@ -143,7 +143,7 @@ class mqtt_publisher(object):
 
 class selection_manager(object):
     def __init__(self):
-        self.touch_ic_count = 8
+        self.touch_ic_count = 16
         self.max_touch_ic = self.touch_ic_count - 1
         self.touch_ic = 0
 
