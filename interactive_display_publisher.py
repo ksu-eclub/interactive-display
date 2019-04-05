@@ -72,6 +72,8 @@ def main():
         for key, new_state in enumerate(new_key_states):
             if(new_state != old_key_states[key]):
                 mqtt_pub.publish_touch(key, new_state)
+        
+        old_key_states = new_key_states
 
     return
 
