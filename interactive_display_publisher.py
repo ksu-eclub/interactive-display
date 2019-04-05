@@ -38,6 +38,7 @@ def main():
     global spi
 
     #GPIO setup
+    GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(CLK, GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(CS_IN, GPIO.OUT, initial=GPIO.LOW)
@@ -434,7 +435,7 @@ class touch_controller(object):
             touch_ic_key_states.append(response[0] & 0b00000100 > 0)
 
             for i, touch_ic_key_state in enumerate(touch_ic_key_states):
-                self.key_states[(touch_ic * self.get_touch_ic_count()) + i] = touch_ic_key_state
+                self.key_states[(touch_ic * self.get_key_count()) + i] = touch_ic_key_state
 
             return True
 
