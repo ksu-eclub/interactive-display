@@ -388,6 +388,8 @@ class touch_controller(object):
 
             #SPI: Send 42 bytes of setup data
             spi.writebytes(setup_data)
+            #Wait 150 us
+            sleep(150.0/1000000.0)
             #If concerned about setup working properly:
             #SPI: Request a dump of setup data
             print("Checking setup for touch IC {}".format(touch_ic))
