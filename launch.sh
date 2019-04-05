@@ -5,12 +5,8 @@ launch_app() {
     name="$1"
     shift
     (
-        (
-            "$@" 2>&1
-        ) | tee "$name.log" | while read line; do
-            echo "[$name] $line"
-        done
-    ) &
+        "$@" 2>&1
+    ) | tee "$name.log" | sed -e "s|^.*$|[$name] &|g" &
 }
 
 python() {
