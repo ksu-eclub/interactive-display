@@ -501,7 +501,7 @@ class touch_controller(object):
 
         for i in range(0, self.get_touch_ic_count()):
             print(i)
-            success = success and self.report_all_keys(i)
+            success = self.report_all_keys(i) and success
 
         return success
 
