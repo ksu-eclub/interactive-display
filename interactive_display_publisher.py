@@ -12,6 +12,9 @@
 #Need to enable SPI on the Pi before running this script!!!
 #############################################################################
 
+#Weston's public SSH key:
+#ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDAMmVCC1zSJuSrtR1HT/uTa/eoovPUA3n6sTwzdcIJbqBEG7V6en++wL0C7Zfo4jz8+ZhlNDu9vCcrAjmJXP6LGyi4wPOdhiOBo0CY985dvl0mKFvFdf67wB7SxDa1kF1sLSN0DqGtS7ex6MiGYhqSg2AAxNJNMYG3KR9fxu6Zb3QBWfmwjP07EdnOgSs+JylN7LCu4KPvsSI+Io+z1ecltb46d1v5kIC0kHDjbM0vZvabHAQH9En6lbFY/ZPzmKuPOCghwp4pa+tSXLmwBpn4Izb82DHpQbdyqcqEk04/AG+2Fiwo4kYlm231HaY195Zuz7Y92/Mj1QrHZqzEwYSyAyOH8CZzWmffCJYnH976nl9sPLlBXJ7UDIERHBN0AAjC7uj6GPWKC57cHueJfrzdeATxh2scNY0SqsimmGc1bfGPm4aKETUfF97PeSJFip0PLTDCNp39bQeR4nS/MZxCAoSV9mtCzsLNdV6JLkRtcv24Lx7bi9SZqVzIKVvQ3G2gVAhd052LL0XIjpPvSH4JcBb1lSELHVeh+jHAO7KRs2Q9Oq5H/zExGCd8yymeYbaD8JRxLVdctS5MpWrV1AVX8ic9TbAIN/VipVfLlJQVA+U7As+KTbruNHak+7iZ7dCMGMFLXLoQKIzcEJo3g0R5hp2BQKljWIBanEvTu9mV6w== wmharder@ksu.edu
+
 import paho.mqtt.client
 import RPi.GPIO as GPIO
 import spidev
@@ -72,13 +75,13 @@ class mqtt_publisher(object):
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.on_disconnect = self.on_disconnect
         self.connect()
-        self.client.loop_start()
+        self.mqtt_client.loop_start()
         
         return
     
     def connect(self):
         print("Attempting to connect to \"{}:{}\"".format(self.host, self.port))
-        self.client.connect_async(self.host, self.port)
+        self.mqtt_client.connect_async(self.host, self.port)
         return
 
     def on_connect(self, client, userdata, flags, rc):
