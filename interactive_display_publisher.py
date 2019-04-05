@@ -55,6 +55,10 @@ def main():
     tc = touch_controller()
     mqtt_pub = mqtt_publisher()
     
+    #Wait until connected to MQTT server
+    while not mqtt_pub.connected():
+        pass
+
     #Main loop
     while(True):
         #Go through every sensor and check for touch
@@ -72,6 +76,7 @@ class mqtt_publisher(object):
         self.port = 1883
         self.topic_template = "interactive_display/touch_events/{}"
         self.msg_template = "{} touched"
+        self.connected = False
         self.mqtt_client = paho.mqtt.client.Client()
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.on_disconnect = self.on_disconnect
@@ -87,6 +92,7 @@ class mqtt_publisher(object):
 
     def on_connect(self, client, userdata, flags, rc):
         if rc==0:
+            self.connected = True
             print("Connected to MQTT server successfully.")
         else:
             print("Failed to connect to the MQTT server. rc = {}".format(rc))
@@ -96,6 +102,7 @@ class mqtt_publisher(object):
         return
 
     def on_disconnect(self, client, userdata, rc):
+        self.connected = False
         print("Disconnected from the MQTT server. rc = {}".format(rc))
         print("See http://www.steves-internet-guide.com/client-connections-python-mqtt/ or https://pypi.org/project/paho-mqtt/ for help.")
         self.connect()
