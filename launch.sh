@@ -25,6 +25,9 @@ gradle build
 . /etc/environment
 export GOPATH
 
+export DISPLAY=:1
+export $(dbus-launch)
+
 trap 'kill $(jobs -p)' EXIT
 if [ $# -ge 1 ]; then
     . "$1"
