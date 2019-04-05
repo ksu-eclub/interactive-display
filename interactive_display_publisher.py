@@ -456,7 +456,9 @@ class touch_controller(object):
     def report_all_keys(self, touch_ic):
         global spi
         global working_touch_ics
+        print(touch_ic)
         if touch_ic not in working_touch_ics:
+            print("Touch IC {} not in {}".format(touch_ic, working_touch_ics))
             return False
 
         print("Report all keys for touch IC {}".format(touch_ic))
