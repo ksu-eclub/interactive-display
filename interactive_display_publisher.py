@@ -3,6 +3,7 @@
 #Interactive Display (Spring Open House, 2019)
 #Author(s): Weston Harder
 
+import paho.mqtt.client
 from time import sleep
 
 def main():
@@ -36,18 +37,34 @@ def main():
 
     return
 
-class audio_player(object):
+class mqtt_publisher(object):
     def __init__(self):
+        self.host = "127.0.0.1"
+        self.port = 1883
+        self.topic = "interactive_display/touch_events"
+        self.mqtt_client = paho.mqtt.client.Client()
+        self.mqtt_client.on_connect = self.on_connect
+        self.client.connect_async(self.host, self.port)
+        self.client.loop_start()
+        
         return
     
-    def beep(self, frequency, duration=0):
-        #Start playing sine wave at frequency through audio output
-        
-        #If a duration was specified, turn off after that amount of time
-        if duration:
-            sleep(duration) #Not a good implementation. Better to calculate a future timestamp and continually poll current time in the main loop until the future timestamp is reached.
-            #Turn off sine wave audio output
-        
+    def on_connect(client, userdata, flags, rc):
+        if rc==0:
+            print("Connected to MQTT server successfully.")
+        else:
+            print("Failed to connect to the MQTT server. rc = {}".format(rc))
+            print("See http://www.steves-internet-guide.com/client-connections-python-mqtt/ or https://pypi.org/project/paho-mqtt/ for help.")
+
+        return
+
+    def publish_touch(self, key):
+        rc = self.mqtt_client.publish(self.topic, str(key))
+
+        if rc:
+            print("Failed to print message \"{}\" to \"{}\". rc = {}".format(str(key), self.topic, rc))
+            print("See https://pypi.org/project/paho-mqtt/ for help.")
+
         return
 
 class selection_manager(object):
