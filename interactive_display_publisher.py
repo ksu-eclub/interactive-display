@@ -59,14 +59,19 @@ def main():
     while not mqtt_pub.connected:
         pass
 
+    old_key_states = tc.get_key_states()
+
     #Main loop
     while(True):
         #Go through every sensor and check for touch
         tc.scan()
 
+        new_key_states = tc.get_key_states()
+
         #Go through each key number
-        for key in tc.get_active_keys():
-            mqtt_pub.publish_touch(key)
+        for key, new_state in enumerate(new_key_states):
+            if(new_state != old_key_states[key]):
+                mqtt_pub.publish_touch(key, new_state)
 
     return
 
@@ -75,7 +80,6 @@ class mqtt_publisher(object):
         self.host = "127.0.0.1"
         self.port = 1883
         self.topic_template = "interactive_display/touch_events/{}"
-        self.msg_template = "{} touched"
         self.connected = False
         self.mqtt_client = paho.mqtt.client.Client()
         self.mqtt_client.on_connect = self.on_connect
@@ -109,10 +113,14 @@ class mqtt_publisher(object):
 
         return
 
-    def publish_touch(self, key):
+    def publish_touch(self, key, new_state):
         print("Remove this after testing is done. Publishing for key {} touch.".format(key)) #Remove this after testing is done.
+        if new_state:
+            msg = "on"
+        else:
+            msg = "off"
+            
         topic = self.topic_template.format(key)
-        msg = self.msg_template.format(key)
         rc = self.mqtt_client.publish(topic, msg)
 
         if rc != 0:
@@ -123,7 +131,7 @@ class mqtt_publisher(object):
 
 class selection_manager(object):
     def __init__(self):
-        self.max_touch_ic = 79
+        self.max_touch_ic = 7 #8 total touch ICs
         self.touch_ic = self.max_touch_ic + 1
 
         self.reset()
@@ -406,6 +414,9 @@ class touch_controller(object):
 
     def get_key_state(self, key):
         return self.key_states[key]
+    
+    def get_key_states(self):
+        return self.key_states[:]
 
     def get_touch_ic_key_state(self, touch_ic, key):
         return self.key_states[(touch_ic * self.get_key_count()) + key]
