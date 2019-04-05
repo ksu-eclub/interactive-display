@@ -57,7 +57,8 @@ class mqtt_publisher(object):
     def __init__(self):
         self.host = "127.0.0.1"
         self.port = 1883
-        self.topic = "interactive_display/touch_events"
+        self.topic_template = "interactive_display/touch_events/{}"
+        self.msg_template = "{} touched"
         self.mqtt_client = paho.mqtt.client.Client()
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.on_disconnect = self.on_disconnect
@@ -89,10 +90,12 @@ class mqtt_publisher(object):
         return
 
     def publish_touch(self, key):
-        rc = self.mqtt_client.publish(self.topic, str(key))
+        topic = self.topic_template.format(key)
+        msg = self.msg_template.format(key)
+        rc = self.mqtt_client.publish(topic, msg)
 
-        if rc:
-            print("Failed to print message \"{}\" to \"{}\". rc = {}".format(str(key), self.topic, rc))
+        if rc != 0:
+            print("Failed to print message \"{}\" to \"{}\". rc = {}".format(msg, topic, rc))
             print("See https://pypi.org/project/paho-mqtt/ for help.")
 
         return
