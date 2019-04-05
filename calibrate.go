@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 )
 
 var handler MQTT.MessageHandler = func(client MQTT.Client, msg MQTT.Message) {
-	fmt.Printf("Topic: %s, message: %s\n", msg.Topic(), msg.Payload())
+	if strings.HasPrefix(msg.Topic(), "interactive_display/touch_events/") {
+		fmt.Printf("channel %s: %s\n", msg.Topic()[len("interactive_display/touch_events/"):], msg.Payload())
+	}
 }
 
 func main() {
@@ -18,8 +21,8 @@ func main() {
 	if token := c.Connect(); token.Wait() && token.Error() != nil {
 		panic(token.Error())
 	}
-	if token := c.Subscribe("#", 0, nil); token.Wait() && token.Error() != nil {
+	if token := c.Subscribe("interactive_display/touch_events/+", 0, nil); token.Wait() && token.Error() != nil {
 		panic(token.Error())
 	}
-	fmt.Println("Subscribed to events")
+	select {}
 }
