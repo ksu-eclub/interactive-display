@@ -21,6 +21,10 @@ java() {
     launch_app "$1" "$(which java)" -cp build/libs/*.jar "$2"
 }
 
+go() {
+    launch_app "$1" "$(which go)" run "$2"
+}
+
 gradle build
 . /etc/environment
 export GOPATH
