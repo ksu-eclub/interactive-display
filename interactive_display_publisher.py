@@ -99,6 +99,7 @@ class mqtt_publisher(object):
         return
 
     def publish_touch(self, key):
+        print("Remove this after testing is done. Publishing for key {} touch.".format(key)) #Remove this after testing is done.
         topic = self.topic_template.format(key)
         msg = self.msg_template.format(key)
         rc = self.mqtt_client.publish(topic, msg)
