@@ -7,18 +7,18 @@ launch_app() {
     (
         (
             "$@" 2>&1
-        ) | while read line; do
+        ) | tee "$name.log" | while read line; do
             echo "[$name] $line"
         done
     ) &
 }
 
 python() {
-    launch_app "$1" "$(which python)" "$1"
+    launch_app "$1" "$(which python)" "$2"
 }
 
 java() {
-    launch_app "$1" "$(which java)" -cp build/libs/*.jar "$1"
+    launch_app "$1" "$(which java)" -cp build/libs/*.jar "$2"
 }
 
 trap 'kill $(jobs -p)' EXIT
