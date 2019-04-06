@@ -1,0 +1,12 @@
+[Unit]
+Description=Tone Mapper for Interactive Display
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv
+ExecStart=/usr/bin/go run tones.go
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
