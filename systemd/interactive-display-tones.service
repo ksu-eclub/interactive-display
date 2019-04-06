@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/srv
-ExecStart=/usr/bin/go run tones.go
+ExecStart=/srv/env.sh go run tones.go
 Restart=on-failure
 
 [Install]

@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/srv
-ExecStart=/srv/audio.sh java -cp build/libs/*.jar com.github.zachdeibert.interactivedisplay.AudioDriver
+ExecStart=/srv/env.sh java -cp build/libs/*.jar com.github.zachdeibert.interactivedisplay.AudioDriver
 Restart=on-failure
 
 [Install]
