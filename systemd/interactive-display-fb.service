@@ -1,0 +1,12 @@
+[Unit]
+Description=Frame Buffer Service for Interactive Display
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv
+ExecStart=/srv/display.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
