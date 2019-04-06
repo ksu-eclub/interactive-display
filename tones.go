@@ -18,6 +18,7 @@ var handler MQTT.MessageHandler = func(client MQTT.Client, msg MQTT.Message) {
 	if strings.HasPrefix(msg.Topic(), "interactive_display/touch_events/") {
 		channel, err := strconv.Atoi(msg.Topic()[len("interactive_display/touch_events/"):])
 		if err == nil {
+			fmt.Println("Got event for channel %d\n", channel)
 			for _, toneMap := range data.Tones {
 				if toneMap.TouchChannel == channel {
 					switch string(msg.Payload()) {

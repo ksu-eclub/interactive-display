@@ -3,7 +3,7 @@ package data
 var (
 	Tones = []toneMapping{
 		// touch channel, audio note, velocity
-		toneMap(89, 60, 100),
-		toneMap(94, 61, 100),
+		toneMap(97, 60, 100),
+		toneMap(98, 61, 100),
 	}
 )
