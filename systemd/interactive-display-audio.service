@@ -1,0 +1,12 @@
+[Unit]
+Description=Audio Driver for Interactive Display
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv
+ExecStart=/usr/bin/java -cp build/libs/*.jar com.github.zachdeibert.interactivedisplay.AudioDriver
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Sensor Driver for Interactive Display
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv
+ExecStart=/usr/bin/python interactive_display_publisher.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

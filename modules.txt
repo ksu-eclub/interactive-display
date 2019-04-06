@@ -1,2 +1,0 @@
-python sensors interactive_display_publisher.py
-java audio com.github.zachdeibert.interactivedisplay.AudioDriver
